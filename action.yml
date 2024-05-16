@@ -21,7 +21,7 @@ inputs:
     description: The global.json file to install from. Passed to -JSonFile.
   
 run:
-  using: composite
+  using: "composite"
   
   steps:
   - shell: pwsh
@@ -75,4 +75,6 @@ run:
       if ($installDir -ne "") { $args += @($installOpt,$installDir); }
       
       &$scriptCmd $script @args;
+      
+      echo "DOTNET_INSTALL_DIR=$env:DOTNET_INSTALL_DIR" >> $env:GITHUB_ENV;
       echo "##[add-matcher]$(Join-Path $env:ACTION_PATH csc.json)" >> $env:GITHUB_OUTPUT;
