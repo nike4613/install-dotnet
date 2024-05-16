@@ -66,15 +66,17 @@ runs:
       $installDir = $env:DOTNET_INSTALL_DIR;
       
       $args = @();
-      if ($version -ne "") { $args += @($versionOpt,$version); }
+      if ($version) { $args += @($versionOpt,$version); }
       else { $args += @($versionOpt,"STS"); }
-      if ($quality -ne "") { $args += @($qualityOpt,$quality); }
-      if ($arch -ne "") { $args += @($archOpt,$arch); }
-      if ($runtime -ne "") { $args += @($runtimeOpt,$runtime); }
-      if ($json -ne "") { $args += @($jsonOpt,$json); }
-      if ($installDir -ne "") { $args += @($installOpt,$installDir); }
+      if ($quality) { $args += @($qualityOpt,$quality); }
+      if ($arch) { $args += @($archOpt,$arch); }
+      if ($runtime) { $args += @($runtimeOpt,$runtime); }
+      if ($json) { $args += @($jsonOpt,$json); }
+      if ($installDir) { $args += @($installOpt,$installDir); }
       
+      echo "Running '$scriptCmd $script" @args "'";
       &$scriptCmd $script @args;
+      if (-not $?) { exit $LastExitCode; }
       
       echo "DOTNET_INSTALL_DIR=$env:DOTNET_INSTALL_DIR" >> $env:GITHUB_ENV;
       echo "##[add-matcher]$(Join-Path $env:ACTION_PATH csc.json)" >> $env:GITHUB_OUTPUT;
