@@ -39,7 +39,7 @@ runs:
       
       $scriptCmd = "bash";
       $script = Join-Path $env:ACTION_PATH dotnet-install.sh;
-      $versionOpt = "--version";
+      $versionOpt = "--channel";
       $qualityOpt = "--quality";
       $archOpt = "--architecture";
       $runtimeOpt = "--runtime";
@@ -50,7 +50,7 @@ runs:
       {
         $scriptCmd = "powershell";
         $script = Join-Path $env:ACTION_PATH dotnet-install.ps1;
-        $versionOpt = "-Version";
+        $versionOpt = "-Channel";
         $qualityOpt = "-Quality";
         $archOpt = "-Architecture";
         $runtimeOpt = "-Runtime";
