@@ -1,0 +1,69 @@
+name: install-dotnet
+
+description: A simple wrapper over the dotnet-install scripts, exposing more of their functionality to Actions than setup/dotnet.
+
+author: DaNike
+
+branding:
+  icon: play
+  color: purple
+  
+inputs:
+  version:
+    description: The version to install. Passed to the -Channel option of the install scripts.
+  quality:
+    description: The quality to use. Passed to the -Quality option.
+  architecture:
+    description: The architecture to install. Passed to -Architecture.
+  runtime:
+    description: Install only the runtime runtime pack, not the SDK. Passed to -Runtime.
+  global-json:
+    description: The global.json file to install from. Passed to -JSonFile.
+  
+run:
+  using: composite
+  
+  steps:
+  - shell: pwsh
+    run: |
+      $ErrorActionPreference = "Stop";
+      
+      $scriptCmd = "bash";
+      $script = Join-Path "${{ github.action_path }}" dotnet-install.sh;
+      $versionOpt = "--channel";
+      $qualityOpt = "--quality";
+      $archOpt = "--architecture";
+      $runtimeOpt = "--runtime";
+      $jsonOpt = "--jsonfile";
+      $installOpt = "--install-dir";
+      
+      if ($IsWindows)
+      {
+          $scriptCmd = "powershell";
+          $script = Join-Path "${{ github.action_path }}" dotnet-install.ps1;
+          $versionOpt = "-Channel";
+          $qualityOpt = "-Quality";
+          $archOpt = "-Architecture";
+          $runtimeOpt = "-Runtime";
+          $jsonOpt = "-JSonFile"; 
+          $installOpt = "-InstallDir";
+      }
+      
+      $version = "${{ inputs.version }}";
+      $quality = "${{ inputs.quality }}";
+      $arch = "${{ inputs.architecture }}";
+      $runtime = "${{ inputs.runtime }}";
+      $json = "${{ inputs.global-json }}";
+      $installDir = $env:DOTNET_INSTALL_DIR;
+      
+      $args = @();
+      if ($version -ne "") { $args += @($versionOpt,$version); }
+      else { $args += @($versionOpt,"STS"); }
+      if ($quality -ne "") { $args += @($qualityOpt,$quality); }
+      if ($arch -ne "") { $args += @($archOpt,$arch); }
+      if ($runtime -ne "") { $args += @($runtimeOpt,$runtime); }
+      if ($json -ne "") { $args += @($jsonOpt,$json); }
+      if ($installDir -ne "") { $args += @($installOpt,$installDir); }
+      
+      &$scriptCmd $script @args;
+      echo "##[add-matcher]$(Join-Path "${{ github.action_path }}" csc.json)";
