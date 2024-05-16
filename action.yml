@@ -78,5 +78,9 @@ runs:
       &$scriptCmd $script @args;
       if (-not $?) { exit $LastExitCode; }
       
-      echo "DOTNET_INSTALL_DIR=$env:DOTNET_INSTALL_DIR" >> $env:GITHUB_ENV;
-      echo "##[add-matcher]$(Join-Path $env:ACTION_PATH csc.json)" >> $env:GITHUB_OUTPUT;
+      if ($installDir)
+      {
+          echo "DOTNET_INSTALL_DIR=$env:DOTNET_INSTALL_DIR" | Out-File $env:GITHUB_ENV -Encoding utf8 -Append;
+          echo $env:DOTNET_INSTALL_DIR | Out-File $env:GITHUB_PATH -Encoding utf8 -Append
+      }
+      echo "::add-matcher::$(Join-Path $env:ACTION_PATH csc.json)";
