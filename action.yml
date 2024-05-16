@@ -48,14 +48,14 @@ runs:
       
       if ($IsWindows)
       {
-          $scriptCmd = "powershell";
-          $script = Join-Path $env:ACTION_PATH dotnet-install.ps1;
-          $versionOpt = "-Channel";
-          $qualityOpt = "-Quality";
-          $archOpt = "-Architecture";
-          $runtimeOpt = "-Runtime";
-          $jsonOpt = "-JSonFile"; 
-          $installOpt = "-InstallDir";
+        $scriptCmd = "powershell";
+        $script = Join-Path $env:ACTION_PATH dotnet-install.ps1;
+        $versionOpt = "-Channel";
+        $qualityOpt = "-Quality";
+        $archOpt = "-Architecture";
+        $runtimeOpt = "-Runtime";
+        $jsonOpt = "-JSonFile"; 
+        $installOpt = "-InstallDir";
       }
       
       $version = $env:_VERSION;
@@ -64,6 +64,18 @@ runs:
       $runtime = $env:_RUNTIME;
       $json = $env:_JSON;
       $installDir = $env:DOTNET_INSTALL_DIR;
+      
+      if (-not $installDir)
+      {
+        if ($IsWindows)
+        {
+          $installDir = Join-Path $env:USERPROFILE ".dotnet";
+        }
+        else
+        {
+          $installDir = "~/.dotnet";
+        }
+      }
       
       $args = @();
       if ($version) { $args += @($versionOpt,$version); }
@@ -74,13 +86,13 @@ runs:
       if ($json) { $args += @($jsonOpt,$json); }
       if ($installDir) { $args += @($installOpt,$installDir); }
       
-      echo "Running '$scriptCmd $script" @args "'";
+      echo "Running '$scriptCmd $script $args'";
       &$scriptCmd $script @args;
       if (-not $?) { exit $LastExitCode; }
       
       if ($installDir)
       {
-          echo "DOTNET_INSTALL_DIR=$env:DOTNET_INSTALL_DIR" | Out-File $env:GITHUB_ENV -Encoding utf8 -Append;
-          echo $env:DOTNET_INSTALL_DIR | Out-File $env:GITHUB_PATH -Encoding utf8 -Append
+        echo "DOTNET_INSTALL_DIR=$installDir" | Out-File $env:GITHUB_ENV -Encoding utf8 -Append;
+        echo $installDir | Out-File $env:GITHUB_PATH -Encoding utf8 -Append
       }
       echo "::add-matcher::$(Join-Path $env:ACTION_PATH csc.json)";
