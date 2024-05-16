@@ -20,7 +20,7 @@ inputs:
   global-json:
     description: The global.json file to install from. Passed to -JSonFile.
   
-run:
+runs:
   using: "composite"
   
   steps:
