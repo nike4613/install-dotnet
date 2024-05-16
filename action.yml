@@ -78,6 +78,9 @@ runs:
       }
       
       $args = @();
+      if ($IsWindows) { $args += @("-SkipNonVersionedFiles"); }
+      else { $args += @("--skip-non-versioned-files"); }
+      
       if ($version) { $args += @($versionOpt,$version); }
       else { $args += @($versionOpt,"STS"); }
       if ($quality) { $args += @($qualityOpt,$quality); }
