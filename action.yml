@@ -67,14 +67,7 @@ runs:
       
       if (-not $installDir)
       {
-        if ($IsWindows)
-        {
-          $installDir = Join-Path $env:USERPROFILE ".dotnet";
-        }
-        else
-        {
-          $installDir = "~/.dotnet";
-        }
+        $installDir = Join-Path (Resolve-Path ~) ".dotnet";
       }
       
       $args = @();
