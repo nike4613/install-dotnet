@@ -71,8 +71,8 @@ runs:
       }
       
       $args = @();
-      if ($IsWindows) { $args += @("-SkipNonVersionedFiles"); }
-      else { $args += @("--skip-non-versioned-files"); }
+      if ($IsWindows) { $args += @("-SkipNonVersionedFiles", "-NoPath"); }
+      else { $args += @("--skip-non-versioned-files", "--no-path"); }
       
       if ($version) { $args += @($versionOpt,$version); }
       if ($quality) { $args += @($qualityOpt,$quality); }
