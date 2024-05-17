@@ -94,7 +94,16 @@ runs:
       
       if ($installDir)
       {
+        echo "DOTNET_MULTILEVEL_LOOKUP=0" | Out-File $env:GITHUB_ENV -Encoding utf8 -Append;
         echo "DOTNET_INSTALL_DIR=$installDir" | Out-File $env:GITHUB_ENV -Encoding utf8 -Append;
+        if ($IsWindows -and $arch -eq "x86")
+        {
+            echo "DOTNET_ROOT(x86)=$installDir" | Out-File $env:GITHUB_ENV -Encoding utf8 -Append;
+        }
+        else
+        {
+            echo "DOTNET_ROOT=$installDir" | Out-File $env:GITHUB_ENV -Encoding utf8 -Append;
+        }
         echo $installDir | Out-File $env:GITHUB_PATH -Encoding utf8 -Append
       }
       echo "::add-matcher::$(Join-Path $env:ACTION_PATH csc.json)";
