@@ -34,7 +34,7 @@ runs:
       _ARCH: ${{ inputs.architecture }}
       _RUNTIME: ${{ inputs.runtime }}
       _JSON: ${{ inputs.global-json }}
-      _IS_RUNNER_ARCH: ${{ inputs.architecture == runner.arch }}
+      _RUNNER_ARCH: ${{ runner.arch }}
     run: |
       $ErrorActionPreference = "Stop";
       
@@ -65,18 +65,28 @@ runs:
       $runtime = $env:_RUNTIME;
       $json = $env:_JSON;
       $installDir = $env:DOTNET_INSTALL_DIR;
-      $isRunnerArch = $env:_IS_RUNNER_ARCH;
+      $runnerArch = $env:_RUNNER_ARCH;
+      
+      echo "##[debug] version = $version";
+      echo "##[debug] quality = $quality";
+      echo "##[debug] arch = $arch";
+      echo "##[debug] runtime = $runtime";
+      echo "##[debug] json = $json";
+      echo "##[debug] installDir = $installDir";
+      echo "##[debug] runnerArch = $runnerArch";
       
       if (-not $installDir)
       {
         $installDir = Join-Path (Resolve-Path ~) ".dotnet";
       
-        if ($arch -and (Test-Path $installDir) -and -not $isRunnerArch)
+        if ($arch -and (Test-Path $installDir) -and $runnerArch.ToLower() -ne $arch.ToLower())
         {
           # the install dir already exists; because we're specifying an architecture, and this is an existing install, install to a subdir instead
           $installDir = Join-Path $installDir "arch-$arch";
         }
       }
+      
+      echo "##[debug] installDir = $installDir";
       
       $args = @();
       if ($IsWindows) { $args += @("-SkipNonVersionedFiles", "-NoPath"); }
